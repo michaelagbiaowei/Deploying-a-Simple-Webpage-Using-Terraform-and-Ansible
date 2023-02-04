@@ -1,10 +1,10 @@
 # VPC
 
-resource "aws_vpc" "cloud-6546354-vpc" {
+resource "aws_vpc" "server_vpc" {
     cidr_block           = "10.0.0.0/16"
     enable_dns_hostnames = true
     tags = {
-      Name = "cloud-6546354-vpc"
+      Name = "server_vpc"
       }
 }
 
@@ -12,7 +12,7 @@ resource "aws_vpc" "cloud-6546354-vpc" {
 # Internet Gateway
 
   resource "aws_internet_gateway" "server_internet_gateway" {
-    vpc_id = aws_vpc.cloud-6546354-vpc.id
+    vpc_id = aws_vpc.server_vpc.id
     tags ={
         Name = "server_internet_gateway"
     }
@@ -22,7 +22,7 @@ resource "aws_vpc" "cloud-6546354-vpc" {
   # Public Route Table
 
   resource "aws_route_table" "server-route-table-public" {
-    vpc_id = aws_vpc.cloud-6546354-vpc.id
+    vpc_id = aws_vpc.server_vpc.id
 
     route {
         cidr_block = "0.0.0.0/0"
@@ -36,16 +36,16 @@ resource "aws_vpc" "cloud-6546354-vpc" {
 
 # Associate public subnet 1 with public route table
 
-resource "aws_route_table_association" "cloud-632565-subnet1-association" {
-    subnet_id      = aws_subnet.cloud-632565-subnet1.id
+resource "aws_route_table_association" "server-public-subnet1-association" {
+    subnet_id      = aws_subnet.server-public-subnet1.id
     route_table_id = aws_route_table.server-route-table-public.id
 }
 
 
 # Associate public subnet 2 with public route table
 
-resource "aws_route_table_association" "cloud-632565-subnet2-association" {
-    subnet_id      = aws_subnet.cloud-632565-subnet2.id
+resource "aws_route_table_association" "server-public-subnet2-association" {
+    subnet_id      = aws_subnet.server-public-subnet2.id
     route_table_id = aws_route_table.server-route-table-public.id
 }
 
@@ -54,33 +54,33 @@ resource "aws_route_table_association" "cloud-632565-subnet2-association" {
 
 # Public Subnet-1
 
-resource "aws_subnet" "cloud-632565-subnet1" {
-    vpc_id                  = aws_vpc.cloud-6546354-vpc.id
+resource "aws_subnet" "server-public-subnet1" {
+    vpc_id                  = aws_vpc.server_vpc.id
     cidr_block              = "10.0.1.0/24"
     map_public_ip_on_launch = true
     availability_zone       = "us-east-1a"
     tags = {
-        Name = "cloud-632565-subnet1"
+        Name = "server-public-subnet1"
     }
 }
 
 # Public Subnet-2
 
-resource "aws_subnet" "cloud-632565-subnet2" {
-    vpc_id                  = aws_vpc.cloud-6546354-vpc.id
+resource "aws_subnet" "server-public-subnet2" {
+    vpc_id                  = aws_vpc.server_vpc.id
     cidr_block              = "10.0.2.0/24"
     map_public_ip_on_launch = true
     availability_zone       = "us-east-1b"
     tags = {
-        Name = "cloud-632565-subnet2"
+        Name = "server-public-subnet2"
     }
 }
 
 # Network ACL
 
 resource "aws_network_acl" "server-network-acl" {
-    vpc_id    = aws_vpc.cloud-6546354-vpc.id
-    subnet_ids = [aws_subnet.cloud-632565-subnet1.id, aws_subnet.cloud-632565-subnet2.id]
+    vpc_id    = aws_vpc.server_vpc.id
+    subnet_ids = [aws_subnet.server-public-subnet1.id, aws_subnet.server-public-subnet2.id]
 
  ingress {
     rule_no    = 100
@@ -106,9 +106,9 @@ resource "aws_network_acl" "server-network-acl" {
 # Security group for the load balanceer
 
 resource "aws_security_group" "server-load_balancer_sg"  {
-    name        = "cloudjdfhlkdj7875845sg"
+    name        = "server-load-balancer-sg"
     description = "Security group for the load balancer"
-    vpc_id      = aws_vpc.cloud-6546354-vpc.id
+    vpc_id      = aws_vpc.server_vpc.id
 
 
  ingress {
@@ -140,7 +140,7 @@ resource "aws_security_group" "server-load_balancer_sg"  {
 resource "aws_security_group" "server-security-grp-rule" {
   name        = "allow_ssh_http_https"
   description = "Allow SSH, HTTP and HTTPS inbound traffic for public instances"
-  vpc_id      = aws_vpc.cloud-6546354-vpc.id
+  vpc_id      = aws_vpc.server_vpc.id
   
 
  ingress {
@@ -192,7 +192,7 @@ resource "aws_instance" "server1" {
   instance_type   = "t2.micro"
   key_name        = "circle"
   security_groups = [aws_security_group.server-security-grp-rule.id]
-  subnet_id       = aws_subnet.cloud-632565-subnet1.id
+  subnet_id       = aws_subnet.server-public-subnet1.id
   availability_zone = "us-east-1a"
 
   tags = {
@@ -208,7 +208,7 @@ resource "aws_instance" "server1" {
   instance_type   = "t2.micro"
   key_name        = "circle"
   security_groups = [aws_security_group.server-security-grp-rule.id]
-  subnet_id       = aws_subnet.cloud-632565-subnet2.id
+  subnet_id       = aws_subnet.server-public-subnet2.id
   availability_zone = "us-east-1b"
   
 
@@ -226,7 +226,7 @@ resource "aws_instance" "server3" {
   instance_type   = "t2.micro"
   key_name        = "circle"
   security_groups = [aws_security_group.server-security-grp-rule.id]
-  subnet_id       = aws_subnet.cloud-632565-subnet1.id
+  subnet_id       = aws_subnet.server-public-subnet1.id
   availability_zone = "us-east-1a"
 
   
@@ -252,16 +252,17 @@ ${aws_instance.server3.public_ip}
 
 # Application Load Balancer
 
-resource "aws_lb" "cloud4543545j7875845" {
-  name               = "cloud4543545j7875845"
+resource "aws_lb" "server-load-balancer" {
+  name               = "server-load-balancer"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.server-load_balancer_sg.id]
-  subnets            = [aws_subnet.cloud-632565-subnet1.id, aws_subnet.cloud-632565-subnet2.id]
+  subnets            = [aws_subnet.server-public-subnet1.id, aws_subnet.server-public-subnet2.id]
   #enable_cross_zone_load_balancing = true
   enable_deletion_protection = false
   depends_on                 = [aws_instance.server1, aws_instance.server2, aws_instance.server3]
 }
+
 
 
 # The target group
@@ -271,7 +272,7 @@ resource "aws_lb_target_group" "server-target-group" {
   target_type = "instance"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = aws_vpc.cloud-6546354-vpc.id
+  vpc_id   = aws_vpc.server_vpc.id
 
   health_check {
     path                = "/"
@@ -288,7 +289,7 @@ resource "aws_lb_target_group" "server-target-group" {
 # The listener
 
 resource "aws_lb_listener" "server-listener" {
-  load_balancer_arn = aws_lb.cloudjdfhlkdj7875845arn
+  load_balancer_arn = aws_lb.server-load-balancer.arn
   port              = "80"
   protocol          = "HTTP"
 
