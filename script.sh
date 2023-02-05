@@ -2,12 +2,16 @@
 
 #!/bin/bash
 
-sudo infra_prov_with_terraform/terraform init
+cd infra_prov_with_terraform/
 
-sudo infra_prov_with_terraform/terraform plan --out output.tfplan
+sudo terraform init
 
-sudo infra_prov_with_terraform/terraform apply "output.tfplan"
+sudo terraform plan --out output.tfplan
+
+sudo terraform apply "output.tfplan"
 
 ##############################################################################
 
-config_mgt_with_absible/ansible-playbook -i inventory configs.yml -v
+cd ../config_mgt_with_absible/
+
+ansible-playbook -i inventory configs.yml -v
