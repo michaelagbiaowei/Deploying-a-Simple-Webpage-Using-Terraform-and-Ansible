@@ -1,0 +1,9 @@
+---
+# handlers file for configs
+
+- name: restart apache2
+  tags: restart
+  service:
+    name: apache2
+    enabled: yes
+    state: restarted

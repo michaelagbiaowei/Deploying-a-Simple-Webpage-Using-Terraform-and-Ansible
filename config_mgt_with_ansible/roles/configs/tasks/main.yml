@@ -1,0 +1,30 @@
+---
+# tasks file for configs
+
+- name: update and upgrade the servers
+  apt:
+    update_cache: yes
+    upgrade: yes
+
+- name: install apache2
+  tags: apache, apache2, ubuntu
+  apt:
+    name:
+      - apache2
+    state: latest
+
+- name: set timezone to Africa/Lagos
+  tags: time
+  timezone: name=Africa/Lagos
+
+- name: display current time on browser
+  copy:
+    src: index.html
+    dest: "{{ var }}"
+
+- name: print hostname on server
+  shell: |
+    echo "<h1>This is server $(hostname -f)</h1>" >> "{{ var }}"
+
+- name: apache2-backup-restart
+  command: systemctl restart apache2
