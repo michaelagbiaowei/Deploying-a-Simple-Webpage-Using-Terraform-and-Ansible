@@ -1,3 +1,5 @@
+# Route53 settings
+
 variable "domain_name" {
   default    = "maiempire.online"
   type        = string
@@ -28,8 +30,6 @@ resource "aws_route53_record" "site_domain" {
     zone_id                = aws_lb.server-load-balancer.zone_id
     evaluate_target_health = true
   }
-
-
 }
 
 
