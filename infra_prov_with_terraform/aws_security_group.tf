@@ -43,8 +43,8 @@ resource "aws_security_group" "server-security-grp-rule" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["aws_security_group.server-load_balancer_sg.id"]
-    # security_groups = [aws_security_group.server-load_balancer_sg.id]
+    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.server-load_balancer_sg.id]
   }
 
 
@@ -53,8 +53,8 @@ resource "aws_security_group" "server-security-grp-rule" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["aws_security_group.server-load_balancer_sg.id"]
-    # security_groups = [aws_security_group.server-load_balancer_sg.id]
+    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [aws_security_group.server-load_balancer_sg.id]
   }
 
   ingress {

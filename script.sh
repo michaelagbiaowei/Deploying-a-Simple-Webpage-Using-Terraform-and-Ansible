@@ -1,17 +1,19 @@
-# Using bash script to automate the execution of terraform and ansible
+# Using bash script to automate the execution of terraform and ansible on AWS Cloud9
 
 #!/bin/bash
 
-cd infra_prov_with_terraform/
+# cd /home/ec2-user/environment/Deploying-a-Simple-Webpage-Using-Terraform-and-Ansible/infra_prov_with_terraform
 
-sudo terraform init
+# sudo terraform init
 
-sudo terraform plan --out output.tfplan
+# sudo terraform plan --out output.tfplan
 
-sudo terraform apply "output.tfplan"
+# sudo terraform apply "output.tfplan"
 
 ##############################################################################
 
-cd ../config_mgt_with_absible/
+# sudo yum install ansible -y
+
+cd /home/ec2-user/environment/Deploying-a-Simple-Webpage-Using-Terraform-and-Ansible/config_mgt_with_ansible
 
 ansible-playbook -i inventory configs.yml -v
