@@ -2,13 +2,13 @@
 
 #!/bin/bash
 
- #cd /home/ec2-user/Deploying-a-Simple-Webpage-Using-Terraform-and-Ansible/infra_prov_with_terraform
+#cd /home/ec2-user/Deploying-a-Simple-Webpage-Using-Terraform-and-Ansible/infra_prov_with_terraform
 
  #sudo terraform init
 
-# sudo terraform plan --out output.tfplan
+#sudo terraform plan --out output.tfplan
 
- #sudo terraform apply "output.tfplan"
+#sudo terraform apply "output.tfplan"
 
 ##############################################################################
 
