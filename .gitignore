@@ -3,3 +3,5 @@ providers.tf
 .terraform.lock.hcl
 circle.pem
 Ifiekemi1990.pem
+terraform.tfstate
+terraform.tfstate.backup
