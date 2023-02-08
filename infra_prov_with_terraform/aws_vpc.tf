@@ -76,7 +76,7 @@ resource "aws_subnet" "server-public-subnet2" {
     }
 }
 
-# Network ACL
+# Network ACL #
 
 resource "aws_network_acl" "server-network-acl" {
     vpc_id    = aws_vpc.server_vpc.id
